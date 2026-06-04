@@ -14,6 +14,9 @@ from src.sire_core import (
     ExcelGenerator
 )
 
+# Generar timestamp para nombres de archivos
+timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
 # ============================================================================
 # INTERFAZ PRINCIPAL
 # ============================================================================

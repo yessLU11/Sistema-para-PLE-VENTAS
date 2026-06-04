@@ -309,4 +309,4 @@ Las contribuciones son bienvenidas. Por favor:
 
 **Última actualización:** Junio 2026  
 **Versión:** 2.1  
-**Mantenedor:** Banco de la Nación del Perú
+**Mantenedor:** Banco de la Nación del Perú / Yessly Josselyn Poma De la cruz
