@@ -1,5 +1,16 @@
+#2_📊_Validador_Documental.py
+"""
+CONVERTIDOR SIRE/PLE - SUNAT
+Doble Formato + Archivos Grandes (hasta 500MB)
+"""
 import streamlit as st
 import pandas as pd
+import os
+import logging
+import datetime
+import pathlib
+from config import APP_TITLE, APP_ICON, INPUT_DIR, OUTPUT_DIR, LOG_DIR
+import gc
 import io
 from src.etl.processor import procesar_excel
 

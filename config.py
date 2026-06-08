@@ -1,3 +1,4 @@
+#config.py
 import os
 
 # Información de la aplicación
@@ -18,7 +19,7 @@ for dir_path in [INPUT_DIR, OUTPUT_DIR, LOG_DIR]:
     os.makedirs(dir_path, exist_ok=True)
 
 # Límites y formatos
-MAX_FILE_SIZE_MB = 500
+MAX_FILE_SIZE_MB = 2000
 MAX_ROWS_PER_SHEET = 1_000_000
 CHUNK_SIZE = 50000
 ENCODING = 'latin-1'

@@ -1,11 +1,20 @@
+#1_🔄_Convertidor_SIRE.py
+"""
+CONVERTIDOR SIRE/PLE - SUNAT
+Version 2.1 - Doble Formato + Archivos Grandes (hasta 2000MB)
+"""
 import streamlit as st
 import pandas as pd
 import os
-import traceback  # <-- Corrección para el error de traceback
-from datetime import datetime  # <-- Necesario para el timestamp
+import logging
+import gc
+import sys 
+from datetime import datetime
 from pathlib import Path
+import traceback
 
-# 🚀 LA CLAVE: Importamos todo lo que moviste al Core masivo
+# 🚀 Importamos todo lo que está en el Core masivo
+# Saca las clases de sire_core, NO de etl.processor
 from src.sire_core import (
     conv_logger,
     SIREValidator,
@@ -34,7 +43,7 @@ with st.sidebar:
 **Características:**
 - ✅ Formato CON encabezados
 - ✅ Formato SIN encabezados  
-- ✅ Archivos hasta 500MB
+- ✅ Archivos hasta 2000MB
 - ✅ Múltiples hojas Excel
 - ✅ Optimizado 1M+ filas
     """)
@@ -129,9 +138,9 @@ if st.session_state.formato_seleccionado:
                     
                     # Elegir procesador según formato
                     if formato == "CON_ENCABEZADOS":
-                        processor = TXTProcessorConEncabezado(max_size_mb=500)
+                        processor = TXTProcessorConEncabezado(max_size_mb=2000)
                     else:
-                        processor = TXTProcessorSinEncabezado(max_size_mb=500)
+                        processor = TXTProcessorSinEncabezado(max_size_mb=2000)
                     
                     df, error = processor.read_txt(temp_path)
                     
@@ -210,7 +219,7 @@ if st.session_state.formato_seleccionado:
                                     st.download_button(
                                         label="📥 DESCARGAR EXCEL GENERADO",
                                         data=f,
-                                        file_name=f"PLE_VENTAS_BN_{timestamp}.xlsx",
+                                        file_name=f"PLE_VENTAS_BN.xlsx",
                                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                                         use_container_width=True
                                     )
