@@ -31,3 +31,4 @@ Por favor, selecciona una herramienta en el menú lateral de la izquierda:
 
 st.info("👈 Usa el menú lateral para navegar entre las aplicaciones.")
 
+
