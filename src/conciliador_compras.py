@@ -634,6 +634,24 @@ def generar_reporte_presentes_no_presentes_sire_bn(df_sire_sunat: pd.DataFrame,
     row += 1
     ws_resumen.write(row, 0, '• No coincidencia (%): Porcentaje de registros que faltan en uno de los sistemas.')
     
+    # ==================== HOJA BD ======================
+    # Crear hoja "SIRE_BD" después de Resumen
+    ws_sire_bd = workbook.add_worksheet('SIRE_BD')
+    
+    # Título
+    ws_sire_bd.merge_range('A1:L1', 'PROPUESTA SIRE BN', title_format)
+    
+    # Información de registros en la fila 3 (Fila 2 en índice 0-indexed)
+    ws_sire_bd.write(2, 0, 'Total registros:', bold_format)
+    ws_sire_bd.write(2, 1, len(df_sire_bn), bold_format)
+
+    # Nota o instrucción en la fila 5 (Fila 4 en índice 0-indexed)
+    ws_sire_bd.write(4, 0, 'Ingrese la tabla principal (Propuesta) usada para hacer la conciliación:', bold_format)
+
+    row += 1
+
+    # Ajustar ancho de columnas de forma eficiente (A hasta F)
+    ws_sire_bd.set_column('A:M', 15)
     # ==================== HOJAS POR TIPO ====================
     for tipo in tipos_sire_bn:
         df_tipo = df_sire_bn[df_sire_bn['Tipo_Doc_Norm'] == tipo]
@@ -889,6 +907,26 @@ def generar_reporte_presentes_no_presentes_sire_sunat(df_sire_sunat: pd.DataFram
     row += 1
     ws_resumen.write(row, 0, '• No coincidencia (%): Porcentaje de registros que faltan en uno de los sistemas.')
     
+
+
+    # ==================== HOJA BD ======================
+    # Crear hoja "SIRE_BD" después de Resumen
+    ws_sire_bd = workbook.add_worksheet('SIRE_BD')
+    
+    # Título
+    ws_sire_bd.merge_range('A1:L1', 'PROPUESTA SIRE SUNAT', title_format)
+    
+    # Información de registros en la fila 3 (Fila 2 en índice 0-indexed)
+    ws_sire_bd.write(2, 0, 'Total registros:', bold_format)
+    ws_sire_bd.write(2, 1, len(df_sire_bn), bold_format)
+
+    # Nota o instrucción en la fila 5 (Fila 4 en índice 0-indexed)
+    ws_sire_bd.write(4, 0, 'Ingrese la tabla principal (Propuesta) usada para hacer la conciliación:', bold_format)
+
+    row += 1
+
+    # Ajustar ancho de columnas de forma eficiente (A hasta F)
+    ws_sire_bd.set_column('A:M', 15)
     # ==================== HOJAS POR TIPO ====================
     for tipo in tipos_sire_sunat:
         df_tipo = df_sire_sunat[df_sire_sunat['Tipo_Doc_Norm'] == tipo]
@@ -926,7 +964,7 @@ def generar_reporte_presentes_no_presentes_sire_sunat(df_sire_sunat: pd.DataFram
                 workbook, df_presentes,
                 f"{base_name}_presentes",
                 header_format,
-                f'✅ PRESENTES EN {nombre_sire_bn}',
+                f'PRESENTES EN {nombre_sire_bn}',
                 '#10B981'  # Verde
             )
         else:

@@ -116,7 +116,7 @@ if archivo1 and archivo2:
 
 st.markdown("---")
 
-if st.button("📊 Cargar y Conciliar Archivos", use_container_width=True, type="primary"):
+if st.button("Cargar y Conciliar Archivos", use_container_width=True, type="primary"):
     if not archivo1 or not archivo2:
         st.error("❌ Por favor, sube ambos archivos.")
     else:
@@ -319,3 +319,16 @@ st.markdown("""
 | **Normalización de número** | 8 dígitos con ceros a la izquierda |
 | **ID de conciliación** | `SERIE + NÚMERO_NORMALIZADO` |
 """)
+
+# ============================================================================
+# FOOTER
+# ============================================================================
+
+st.markdown("---")
+st.markdown("""
+<div style='text-align: center; color: #9e9e9e; padding: 20px;'>
+    <p>🏦 <b>Área de Tributación - BN - Soporte Tecnico: Yessly Poma de la cruz</b></p>
+    <p style='font-size: 12px;'>Conciliador | SIRE BN | SIRE SUNAT</p>
+    <p style='font-size: 11px; margin-top: 10px;'>© 2026 Todos los derechos reservados</p>
+</div>
+""", unsafe_allow_html=True)
