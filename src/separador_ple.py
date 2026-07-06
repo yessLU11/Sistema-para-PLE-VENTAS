@@ -22,7 +22,7 @@ import chardet
 # CONFIGURACIÓN DE COLUMNAS
 # ============================================================================
 
-# Posiciones fijas en el TXT (0-index)
+# Posiciones fijas en el TXT y excel (0-index)
 COLUMNA_SERIE_TXT = 7       # Posición de la Serie (ej: B001, F001, 0128)
 COLUMNA_SERIE_EXCEL = 6     # Columna G (0-index) para Excel - SIEMPRE ESTA
 
@@ -249,13 +249,13 @@ def leer_excel_masivo(file_path: str,
         # Verificar que existe la columna G (posición 6)
         if len(df_final.columns) > COLUMNA_SERIE_EXCEL:
             col_g = df_final.columns[COLUMNA_SERIE_EXCEL]
-            debug_print(f"✅ Columna G (posición {COLUMNA_SERIE_EXCEL}): '{col_g}'", 1, True)
+            debug_print(f"Columna G (posición {COLUMNA_SERIE_EXCEL}): '{col_g}'", 1, True)
             
             # Mostrar muestra de valores de la columna G
             muestra = df_final[col_g].head(10).tolist()
             debug_print(f"Muestra de valores en columna G: {muestra}", 1, True)
         else:
-            debug_print(f"⚠️ Menos de 7 columnas. Total: {len(df_final.columns)}", 1, True)
+            debug_print(f"Menos de 7 columnas. Total: {len(df_final.columns)}", 1, True)
         
         return df_final
         
@@ -291,7 +291,7 @@ def separar_por_tipo(df: pd.DataFrame, tipo_archivo: str = "txt") -> Tuple[pd.Da
         # TXT: usar columna en posición 7 (índice 7)
         if len(df.columns) > COLUMNA_SERIE_TXT:
             col_serie = df.columns[COLUMNA_SERIE_TXT]
-            debug_print(f"✅ Usando columna por posición {COLUMNA_SERIE_TXT}: '{col_serie}'", 2, True)
+            debug_print(f"Usando columna por posición {COLUMNA_SERIE_TXT}: '{col_serie}'", 2, True)
         else:
             debug_print(f"❌ No hay suficientes columnas. Solo {len(df.columns)}", 1, True)
             return pd.DataFrame(), df
@@ -299,7 +299,7 @@ def separar_por_tipo(df: pd.DataFrame, tipo_archivo: str = "txt") -> Tuple[pd.Da
         # Excel: SIEMPRE usar columna G (posición 6)
         if len(df.columns) > COLUMNA_SERIE_EXCEL:
             col_serie = df.columns[COLUMNA_SERIE_EXCEL]
-            debug_print(f"✅ Usando columna G (posición {COLUMNA_SERIE_EXCEL}): '{col_serie}'", 2, True)
+            debug_print(f"Usando columna G (posición {COLUMNA_SERIE_EXCEL}): '{col_serie}'", 2, True)
         elif len(df.columns) > 0:
             # Si hay menos de 7 columnas, usar la primera como fallback
             col_serie = df.columns[0]
@@ -312,7 +312,7 @@ def separar_por_tipo(df: pd.DataFrame, tipo_archivo: str = "txt") -> Tuple[pd.Da
         debug_print("❌ No se encontró columna de serie", 1, True)
         return pd.DataFrame(), df
     
-    debug_print(f"✅ Columna de serie seleccionada: '{col_serie}'", 1, True)
+    debug_print(f"Columna de serie seleccionada: '{col_serie}'", 1, True)
     
     # Mostrar muestra de valores
     sample = df[col_serie].head(10).tolist()
