@@ -19,9 +19,6 @@ import xlsxwriter
 # ============================================================================
 # FUNCIÓN AUXILIAR PARA MANEJAR LÍMITES DE EXCEL
 # ============================================================================
-# ============================================================================
-# FUNCIÓN AUXILIAR PARA MANEJAR LÍMITES DE EXCEL
-# ============================================================================
 
 def escribir_datos_con_limite(workbook, df, nombre_base, header_format, 
                                titulo_seccion, color_fondo, color_texto='white'):
