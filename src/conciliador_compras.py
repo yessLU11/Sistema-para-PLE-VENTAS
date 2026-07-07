@@ -627,9 +627,9 @@ def generar_reporte_presentes_no_presentes_sire_bn(df_sire_sunat: pd.DataFrame,
     row += 2
     ws_resumen.write(row, 0, 'DESCRIPCIÓN DEL REPORTE:', bold_format)
     row += 1
-    ws_resumen.write(row, 0, '• Coincidencia (%): Porcentaje de registros que están en ambos sistemas.')
+    ws_resumen.write(row, 0, '• Para la presentación final agrega un grafico circular con los porcentajes de coincidencia y no coincidencia.')
     row += 1
-    ws_resumen.write(row, 0, '• No coincidencia (%): Porcentaje de registros que faltan en uno de los sistemas.')
+    ws_resumen.write(row, 0, '• Y también un grafico de barras con los totales por tipo de documento.')
     
     # ==================== HOJA BD ======================
     # Crear hoja "SIRE_BD" después de Resumen
@@ -900,9 +900,9 @@ def generar_reporte_presentes_no_presentes_sire_sunat(df_sire_sunat: pd.DataFram
     row += 2
     ws_resumen.write(row, 0, 'DESCRIPCIÓN DEL REPORTE:', bold_format)
     row += 1
-    ws_resumen.write(row, 0, '• Coincidencia (%): Porcentaje de registros que están en ambos sistemas.')
+    ws_resumen.write(row, 0, '• Para la presentación final agrega un grafico circular con los porcentajes de coincidencia y no coincidencia.')
     row += 1
-    ws_resumen.write(row, 0, '• No coincidencia (%): Porcentaje de registros que faltan en uno de los sistemas.')
+    ws_resumen.write(row, 0, '• Y también un grafico de barras con los totales por tipo de documento.')
     
 
 

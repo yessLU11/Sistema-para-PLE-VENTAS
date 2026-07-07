@@ -4,83 +4,106 @@
 [![License](https://img.shields.io/badge/license-MIT-green)]()
 [![Status](https://img.shields.io/badge/status-Active-success)]()
 
+
+# PLE VENTAS - Sistema de Procesamiento Tributario
+
 ## 📋 Descripción General
 
-**Sistema profesional de procesamiento y validación de archivos SIRE para el PLE (Registro de Compras y Ventas) de SUNAT.** Esta aplicación web desarrollada con Streamlit facilita la conversión de archivos TXT masivos a formato Excel y la validación documental para detectar duplicados.
+Sistema integral para el procesamiento de archivos pertenecientes a PLE Ventas, diseñado para el área de tributación del Banco de la Nación.
 
-Diseñado por el **Área de Tributación del Banco de la Nación del Perú**, este sistema optimiza el procesamiento de grandes volúmenes de datos fiscales, permitiendo manejar archivos de hasta 500MB y más de 1 millón de filas.
+Diseñado por Poma De la cruz Yessly Josselyn **Área de Tributación del Banco de la Nación del Perú**, este sistema optimiza el procesamiento de grandes volúmenes de datos fiscales, permitiendo manejar archivos de hasta 500MB y más de 1 millón de filas.
+
+## 🏗️ Arquitectura del Sistema
+PLE_VENTAS/
+├── app.py # Página principal
+├── config.py # Configuración global
+├── requirements.txt # Dependencias
+├── pages/
+│ ├── 1_🔄_Convertidor_SIRE.py # TXT → Excel
+│ ├── 2_📊_Validador_Documental.py # Detección de duplicados
+│ ├── 3_📅_Ordenar_Boletas.py # Ordenar boletas por día
+│ ├── 4_📂_Separador_PLE_VENTAS.py # Separar B vs F
+│ └── 5_🔍_Conciliador_PLE_VENTAS.py # PLE vs SUNAT
+├── src/ # Lógica de negocio
+│ ├── sire_core.py # Core de conversión
+│ ├── separador_ple.py # Lógica de separación
+│ ├── conciliador_compras.py # Lógica de conciliación
+│ └── etl/
+│ └── processor.py # Procesamiento ETL
+├── input_files/ # Archivos de entrada
+├── output_files/ # Archivos de salida
+├── reportes/ # Reportes generados
+├── logs/ # Logs del sistema
+└── uploads/ # Uploads temporales
 
 ---
 
-## ✨ Características Principales
+## 🔄 Flujo de Trabajo
 
-### 🔄 Convertidor SIRE/PLE (v2.1)
-- ✅ Conversión de archivos TXT a Excel (XLSX)
-- ✅ Soporte para archivos **CON encabezados**
-- ✅ Soporte para archivos **SIN encabezados**
-- ✅ Procesamiento de archivos hasta **500MB**
-- ✅ Generación de múltiples hojas Excel automáticas
-- ✅ Optimizado para **+1,000,000 de filas**
-- ✅ Logging completo del proceso de conversión
-- ✅ Validación SIRE integrada
+1. **Convertir** - TXT → Excel (Módulo 1)
+2. **Validar** - Detectar duplicados (Módulo 2)
+3. **Ordenar** - Boletas por día (Módulo 3)
+4. **Separar** - Boletas vs Facturas (Módulo 4)
+5. **Conciliar** - PLE vs SUNAT (Módulo 5)
 
-### 📊 Validador Documental
-- ✅ Normalización automática de códigos
-- ✅ Detección de registros duplicados
-- ✅ Soporte para documentos tipo 01 y 03
-- ✅ Estadísticas detalladas de procesamiento
-- ✅ Descarga de reportes en Excel
-- ✅ Dashboard interactivo de métricas
+## 📦 Módulos
+
+### 1️⃣ Convertidor SIRE → Excel
+Convierte archivos TXT del SIRE a Excel estructurado.
+- Soporte para archivos >500MB
+- Formato CON/SIN encabezados
+- Múltiples hojas automáticas
+
+### 2️⃣ Validador Documental
+Detecta duplicados en documentos tipo 01 y 03.
+- Normaliza códigos automáticamente
+- Reporte detallado de duplicados
+
+### 3️⃣ Ordenar Boletas por Día
+Agrupa boletas tipo 03 por fecha y establecimiento.
+- Genera IDs correlativos
+- Resumen por establecimiento
+
+### 4️⃣ Separador PLE VENTAS
+Separa boletas (B) de facturas y otros.
+- Soporte TXT/Excel
+- Descarga independiente
+
+### 5️⃣ Conciliador PLE VENTAS
+Compara PLE vs SUNAT.
+- Reportes SIRE_BN y SIRE_SUNAT
+- Formato profesional
+
+## 🚀 Instalación
+
+```bash
+# Clonar repositorio
+git clone [url-del-repo]
+
+# Instalar dependencias
+pip install -r requirements.txt
+
+# Ejecutar aplicación
+streamlit run app.py
 
 ---
 
 ## 🛠️ Requisitos del Sistema
 
 ### Dependencias
-- **Python 3.8+**
-- **Streamlit 1.32.0** - Framework web interactivo
-- **Pandas 2.2.1** - Procesamiento de datos
-- **XlsxWriter 3.1.9** - Generación de archivos Excel
-- **OpenPyXL 3.1.2** - Lectura y manipulación de Excel
+- **Python 3.10+**
+- **Streamlit 1.35.0** 
+- **Archivos** hasta 2000MB
+- **Memoria RAM** 8GB+ recomendado
 
 ### Especificaciones Recomendadas
 - RAM: Mínimo 4GB (recomendado 8GB+)
 - Espacio en disco: 1GB disponible
 - Conexión a internet: No requerida (aplicación local)
-
----
-
-## 📦 Instalación
-
-### 1. Clonar el Repositorio
-```bash
-git clone https://github.com/yessLU11/Sistema-de-procesamiento-de-archivos-para-el-PLE-de-Ventas.git
-cd codigo_PLE_VENTAS
-```
-
-### 2. Crear Entorno Virtual (Recomendado)
-```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
-
-# Linux/macOS
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 3. Instalar Dependencias
-```bash
-pip install -r requirements.txt
 ```
 
 ---
 
-## 🚀 Uso
-
-### Iniciar la Aplicación
-```bash
-streamlit run app.py
 ```
 
 La aplicación se abrirá en tu navegador en `http://localhost:8501`
@@ -261,7 +284,7 @@ chmod 755 input_files output_files logs
 
 ## 📞 Contacto y Soporte
 
-**Desarrollado por:** Área de Tributación - Banco de la Nación del Perú
+**Desarrollado por:**Poma de la cruz Yessly Josselyn © 2026 Todos los derechos reservados Área de Tributación - Banco de la Nación del Perú
 
 Para reportar bugs o sugerencias:
 - 📧 Email: tributacion@bn.com.pe
@@ -293,20 +316,9 @@ Las contribuciones son bienvenidas. Por favor:
 - [SUNAT - PLE de Ventas](https://www.sunat.gob.pe/)
 - [Especificaciones SIRE](https://www.sunat.gob.pe/orientacionaduanera/renta/)
 
----
-
-## 🗺️ Roadmap Futuro
-
-- [ ] Soporte para más formatos de entrada (CSV, JSON)
-- [ ] API REST para integración con terceros
-- [ ] Validación avanzada con reglas personalizables
-- [ ] Exportación a base de datos (PostgreSQL, MySQL)
-- [ ] Dashboard de estadísticas en tiempo real
-- [ ] Autenticación de usuarios
-- [ ] Versionado de archivos procesados
 
 ---
 
-**Última actualización:** Junio 2026  
+**Última actualización:** Julio 2026  
 **Versión:** 2.1  
 **Mantenedor:** Banco de la Nación del Perú

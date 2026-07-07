@@ -1,4 +1,4 @@
-#1_🔄_Convertidor_SIRE.py
+# pages/1_🔄_Convertidor_SIRE.py
 """
 CONVERTIDOR SIRE/PLE - SUNAT
 Version 2.1 - Doble Formato + Archivos Grandes (hasta 2000MB)
@@ -15,7 +15,6 @@ from pathlib import Path
 import traceback
 
 # 🚀 Importamos todo lo que está en el Core masivo
-# Saca las clases de sire_core, NO de etl.processor
 from src.sire_core import (
     conv_logger,
     SIREValidator,
@@ -24,12 +23,34 @@ from src.sire_core import (
     ExcelGenerator
 )
 
+# ============================================================================
+# CONFIGURACIÓN INICIAL
+# ============================================================================
+
 # Generar timestamp para nombres de archivos
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 
 # ============================================================================
+# INICIALIZAR ESTADO DE SESIÓN (IMPORTANTE)
+# ============================================================================
+
+# Inicializar todas las variables de estado al inicio
+if 'formato_seleccionado' not in st.session_state:
+    st.session_state.formato_seleccionado = None
+if 'mostrar_paso2' not in st.session_state:
+    st.session_state.mostrar_paso2 = False
+if 'archivo_cargado' not in st.session_state:
+    st.session_state.archivo_cargado = None
+
+# ============================================================================
 # INTERFAZ PRINCIPAL
 # ============================================================================
+
+st.set_page_config(
+    page_title="Convertidor SIRE/PLE",
+    page_icon="🔄",
+    layout="wide"
+)
 
 st.markdown('<p class="header-title">🏦 Convertidor SIRE/PLE - SUNAT</p>', unsafe_allow_html=True)
 st.markdown('<p class="header-subtitle">Área de Tributación - Banco de la Nación</p>', unsafe_allow_html=True)
@@ -53,7 +74,7 @@ with st.sidebar:
     st.write("📁 Archivos procesados: ", len(list(Path("output_files").glob("*.xlsx"))))
 
 # ============================================================================
-# SELECCIÓN DE FORMATO
+# PASO 1: SELECCIÓN DE FORMATO (Siempre visible)
 # ============================================================================
 
 st.markdown("### 📂 **Paso 1: Selecciona el Formato de tu Archivo TXT**")
@@ -68,7 +89,12 @@ with col1:
         <div class="opcion-desc" style="margin-top:10px;color:#666;">Ej: Ruc|Razón Social|Total CP|...</div>
     </div>
     """, unsafe_allow_html=True)
-    opcion1 = st.button("📋 CON ENCABEZADOS", use_container_width=True, key="btn_formato1")
+    
+    # ✅ ELIMINAR st.rerun() - Solo actualizar estado
+    if st.button("📋 CON ENCABEZADOS", use_container_width=True, key="btn_formato1"):
+        st.session_state.formato_seleccionado = "CON_ENCABEZADOS"
+        st.session_state.mostrar_paso2 = True
+        st.session_state.archivo_cargado = None  # Resetear archivo
 
 with col2:
     st.markdown("""
@@ -78,38 +104,49 @@ with col2:
         <div class="opcion-desc" style="margin-top:10px;color:#666;">Ej: 1|20260500|651-18264653-14|...</div>
     </div>
     """, unsafe_allow_html=True)
-    opcion2 = st.button("📋 SIN ENCABEZADOS", use_container_width=True, key="btn_formato2")
-
-# Variable de sesión para mantener la selección
-if 'formato_seleccionado' not in st.session_state:
-    st.session_state.formato_seleccionado = None
-
-if opcion1:
-    st.session_state.formato_seleccionado = "CON_ENCABEZADOS"
-    st.rerun()
-elif opcion2:
-    st.session_state.formato_seleccionado = "SIN_ENCABEZADOS"
-    st.rerun()
+    
+    # ✅ ELIMINAR st.rerun() - Solo actualizar estado
+    if st.button("📋 SIN ENCABEZADOS", use_container_width=True, key="btn_formato2"):
+        st.session_state.formato_seleccionado = "SIN_ENCABEZADOS"
+        st.session_state.mostrar_paso2 = True
+        st.session_state.archivo_cargado = None  # Resetear archivo
 
 # ============================================================================
-# ZONA DE CARGA (según formato seleccionado)
+# PASO 2: CARGA DE ARCHIVO (Se muestra automáticamente)
 # ============================================================================
 
-if st.session_state.formato_seleccionado:
+# ✅ MOSTRAR PASO 2 cuando se ha seleccionado un formato
+if st.session_state.mostrar_paso2 and st.session_state.formato_seleccionado:
+    
     formato = st.session_state.formato_seleccionado
     
     st.markdown("---")
     st.markdown(f"### 📂 **Paso 2: Cargar archivo ({formato})**")
+    
+    # Botón para cambiar de formato (volver al paso 1)
+    if st.button("🔄 Cambiar formato", use_container_width=False):
+        st.session_state.formato_seleccionado = None
+        st.session_state.mostrar_paso2 = False
+        st.session_state.archivo_cargado = None
+        st.rerun()
     
     col1, col2 = st.columns([3, 1])
     with col1:
         uploaded_file = st.file_uploader(
             f"Selecciona el archivo TXT ({formato})",
             type=["txt"],
-            help=f"Archivo en formato SIRE - {formato}"
+            help=f"Archivo en formato SIRE - {formato}",
+            key="file_uploader_main"  # ✅ Key única para evitar conflictos
         )
 
+    # ========================================================================
+    # PASO 3: PROCESAMIENTO (Cuando se carga un archivo)
+    # ========================================================================
+    
     if uploaded_file is not None:
+        # Guardar archivo en session_state
+        st.session_state.archivo_cargado = uploaded_file
+        
         # Info del archivo
         tamano_mb = uploaded_file.size / (1024 * 1024)
         st.markdown(f"""
@@ -123,7 +160,7 @@ if st.session_state.formato_seleccionado:
         st.markdown("---")
         st.markdown("### ⚙️ **Paso 3: Procesar y Convertir**")
         
-        if st.button("🚀 CONVERTIR A EXCEL", use_container_width=True):
+        if st.button("🚀 CONVERTIR A EXCEL", use_container_width=True, type="primary"):
             start_time = time.perf_counter()
             progress_bar = st.progress(0.0)
             status_text = st.empty()
@@ -138,7 +175,6 @@ if st.session_state.formato_seleccionado:
 
             with st.spinner('⏳ Procesando datos, por favor espere...\n\n⚠️ Archivos grandes pueden tomar varios minutos.'):
                 try:
-                    # 🕒 GENERAMOS EL TIMESTAMP AQUÍ PARA QUE NO DE ERROR
                     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                     update_progress(0.05, 'Guardando archivo temporal...')
                     
@@ -210,19 +246,21 @@ if st.session_state.formato_seleccionado:
                                     st.metric("📄 Hojas Excel", generator.sheets_created)
                                 with col4:
                                     st.metric("⏱️ Tiempo total", f"{elapsed:.2f} s")
-                                    monto_col = None
-                                    for col in ['MontoTotal', 'Total CP', 'Total']:
-                                        if col in df.columns:
-                                            monto_col = col
-                                            break
-                                    if monto_col:
-                                        try:
-                                            total = pd.to_numeric(df[monto_col], errors='coerce').sum()
-                                            st.metric("💰 Total", f"{total:,.2f}")
-                                        except:
-                                            st.metric("💰 Total", "N/A")
-                                    else:
+                                
+                                # Buscar columna de monto
+                                monto_col = None
+                                for col in ['MontoTotal', 'Total CP', 'Total']:
+                                    if col in df.columns:
+                                        monto_col = col
+                                        break
+                                if monto_col:
+                                    try:
+                                        total = pd.to_numeric(df[monto_col], errors='coerce').sum()
+                                        st.metric("💰 Total", f"{total:,.2f}")
+                                    except:
                                         st.metric("💰 Total", "N/A")
+                                else:
+                                    st.metric("💰 Total", "N/A")
                                 
                                 # Vista previa
                                 st.markdown("---")
@@ -230,29 +268,31 @@ if st.session_state.formato_seleccionado:
                                 st.dataframe(df.head(10), use_container_width=True, height=300)
                                 
                                 # Éxito
-                                st.markdown("""
-                                    <div class="success-box">
-                                        <b>✅ ¡Conversión completada exitosamente!</b><br>
-                                        Archivo listo para descargar
-                                    </div>
-                                """, unsafe_allow_html=True)
+                                st.success("✅ ¡Conversión completada exitosamente! Archivo listo para descargar.")
                                 
-                                # Botón descarga usando el timestamp ya definido arriba 🚀
+                                # Botón descarga
                                 with open(output_filename, "rb") as f:
                                     st.download_button(
                                         label="📥 DESCARGAR EXCEL GENERADO",
                                         data=f,
                                         file_name=f"PLE_VENTAS_BN.xlsx",
                                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                                        use_container_width=True
+                                        use_container_width=True,
+                                        type="primary"
                                     )
                             else:
                                 st.error(f"❌ {message}")
                                 
                 except Exception as e:
-                    # Aquí conv_logger y traceback ya funcionarán perfectamente
                     conv_logger.error(f"Excepción: {traceback.format_exc()}")
                     st.error(f"❌ Error inesperado: {str(e)}")
+                    with st.expander("Ver detalles técnicos"):
+                        st.code(traceback.format_exc())
+else:
+    # Mostrar mensaje si no se ha seleccionado formato
+    if not st.session_state.mostrar_paso2:
+        st.info("👆 Selecciona un formato arriba para continuar con la carga del archivo.")
+
 # ============================================================================
 # FOOTER
 # ============================================================================
