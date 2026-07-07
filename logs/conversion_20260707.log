@@ -1,0 +1,13 @@
+[2026-07-07 10:26:09] INFO - Iniciando conversión: pruebas.TXT
+[2026-07-07 10:26:09] INFO - Formato seleccionado: SIN_ENCABEZADOS
+[2026-07-07 10:26:09] INFO - Iniciando lectura SIN encabezados: input_files\temp_upload.txt (0.00MB)
+[2026-07-07 10:26:09] INFO - Total líneas en archivo: 16
+[2026-07-07 10:26:09] INFO - 🔥 Datos encontrados en línea 1
+[2026-07-07 10:26:09] INFO -     Primera línea de datos: 20260600||M|30/06/2026||01|F029|00638932||6|20100053455|BANCO INTERNACIONAL DEL ...
+[2026-07-07 10:26:09] WARNING - ⚠️ No se encontró delimitador claro, interpretando todo como datos
+[2026-07-07 10:26:09] INFO - 📊 Líneas de datos a procesar: 16
+[2026-07-07 10:26:09] INFO - ✅ Columna vacía final eliminada
+[2026-07-07 10:26:09] INFO - ✅ Total leído: 16 filas
+[2026-07-07 10:26:09] INFO - Generando Excel con 1 hoja(s)...
+[2026-07-07 10:26:09] INFO - Hoja 1 completada
+[2026-07-07 10:26:09] INFO - Excel creado: 1 hoja(s)

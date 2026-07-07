@@ -48,7 +48,27 @@ def limpiar_valor(valor) -> str:
     valor = valor.replace('\r', ' ').replace('\n', ' ').replace('\t', ' ')
     valor = re.sub(r'\s+', ' ', valor)
     return valor.strip()
-
+def extraer_serie_de_linea(linea: str) -> str:
+    """
+    Extrae la serie de una línea TXT.
+    Busca patrones como: B001, F001, 0128, B029, F029, etc.
+    """
+    # Dividir por pipe
+    partes = linea.split('|')
+    
+    # Buscar en todas las partes un patrón de serie
+    for parte in partes:
+        parte_limpia = parte.strip()
+        # Buscar series que comienzan con B, F o son números de 3-4 dígitos
+        if re.match(r'^[BF]\d{3,4}$', parte_limpia) or re.match(r'^\d{3,4}$', parte_limpia):
+            return parte_limpia
+    
+    # Si no se encuentra, buscar con expresión regular en toda la línea
+    match = re.search(r'\b([BF]\d{3,4}|\d{3,4})\b', linea)
+    if match:
+        return match.group(1)
+    
+    return ''
 
 def debug_print(mensaje, nivel=0, mostrar=True):
     """Imprime mensajes de debug."""
@@ -68,6 +88,7 @@ def leer_txt_masivo(file_path: str,
                     progress_callback=None) -> pd.DataFrame:
     """
     Lee un archivo TXT masivo por chunks para optimizar memoria.
+    Extrae automáticamente la serie de cada línea.
     """
     start_time = time.perf_counter()
     
@@ -99,11 +120,14 @@ def leer_txt_masivo(file_path: str,
             for linea in f:
                 linea_limpia = limpiar_valor(linea)
                 if linea_limpia:
-                    chunk.append(linea_limpia)
+                    # Extraer la serie ANTES de procesar
+                    serie = extraer_serie_de_linea(linea_limpia)
+                    # Agregar la serie al inicio de la línea para fácil acceso
+                    chunk.append((serie, linea_limpia))
                 lineas_procesadas += 1
                 
                 if len(chunk) >= chunk_size:
-                    df_chunk = procesar_chunk_txt(chunk)
+                    df_chunk = procesar_chunk_txt_corregido(chunk)
                     if not df_chunk.empty:
                         chunks.append(df_chunk)
                     chunk = []
@@ -116,7 +140,7 @@ def leer_txt_masivo(file_path: str,
                     gc.collect()
             
             if chunk:
-                df_chunk = procesar_chunk_txt(chunk)
+                df_chunk = procesar_chunk_txt_corregido(chunk)
                 if not df_chunk.empty:
                     chunks.append(df_chunk)
         
@@ -135,10 +159,43 @@ def leer_txt_masivo(file_path: str,
         raise MemoryError("Archivo demasiado grande para la memoria disponible.")
     except Exception as e:
         raise Exception(f"Error al leer el archivo: {str(e)}")
-
-
+    
+def procesar_chunk_txt_corregido(chunk: List[tuple]) -> pd.DataFrame:
+    """
+    Procesa un chunk de líneas TXT con su serie extraída.
+    """
+    if not chunk:
+        return pd.DataFrame()
+    
+    datos = []
+    series = []
+    
+    for serie, linea in chunk:
+        if linea:
+            # Dividir por pipe
+            partes = linea.split('|')
+            datos.append(partes)
+            series.append(serie)
+    
+    if not datos:
+        return pd.DataFrame()
+    
+    # Crear DataFrame con columnas genéricas
+    max_cols = max(len(d) for d in datos)
+    df = pd.DataFrame(datos)
+    
+    # Asegurar que todas las filas tengan el mismo número de columnas
+    for i in range(len(df)):
+        if len(df.iloc[i]) < max_cols:
+            df.iloc[i] = df.iloc[i].tolist() + [''] * (max_cols - len(df.iloc[i]))
+    
+    # Agregar columna de serie extraída (en la posición 0)
+    df.insert(0, 'Serie_Extraida', series)
+    
+    return df
+"""
 def procesar_chunk_txt(chunk: List[str]) -> pd.DataFrame:
-    """Procesa un chunk de líneas TXT y las convierte a DataFrame."""
+    #Procesa un chunk de líneas TXT y las convierte a DataFrame.
     if not chunk:
         return pd.DataFrame()
     
@@ -162,7 +219,7 @@ def procesar_chunk_txt(chunk: List[str]) -> pd.DataFrame:
             df.iloc[i] = df.iloc[i].tolist() + [''] * (max_cols - len(df.iloc[i]))
     
     return df
-
+"""
 
 # ============================================================================
 # FUNCIONES DE LECTURA PARA EXCEL
@@ -288,12 +345,15 @@ def separar_por_tipo(df: pd.DataFrame, tipo_archivo: str = "txt") -> Tuple[pd.Da
     col_serie = None
     
     if tipo_archivo == "txt":
-        # TXT: usar columna en posición 7 (índice 7)
-        if len(df.columns) > COLUMNA_SERIE_TXT:
+        # TXT: usar la columna 'Serie_Extraida' que creamos al leer
+        if 'Serie_Extraida' in df.columns:
+            col_serie = 'Serie_Extraida'
+            debug_print(f"✅ Usando columna 'Serie_Extraida' para TXT", 2, True)
+        elif len(df.columns) > COLUMNA_SERIE_TXT:
             col_serie = df.columns[COLUMNA_SERIE_TXT]
-            debug_print(f"Usando columna por posición {COLUMNA_SERIE_TXT}: '{col_serie}'", 2, True)
+            debug_print(f"⚠️ Usando columna por posición {COLUMNA_SERIE_TXT}: '{col_serie}'", 2, True)
         else:
-            debug_print(f"❌ No hay suficientes columnas. Solo {len(df.columns)}", 1, True)
+            debug_print(f"❌ No se encontró columna de serie", 1, True)
             return pd.DataFrame(), df
     else:
         # Excel: SIEMPRE usar columna G (posición 6)
