@@ -26,12 +26,12 @@ st.set_page_config(
 # TÍTULO Y DESCRIPCIÓN AMIGABLE
 # ============================================================================
 
-st.title("📊 Validador Documental")
+st.title(" 📊 Validador Documental")
 st.markdown("---")
 
 # Explicación clara para el usuario
 st.markdown ( """
-### 🔍 ¿Qué hace esta herramienta?
+###  ¿Qué hace esta herramienta?
 
 Esta herramienta **revisa tu archivo Excel** y encuentra **registros duplicados** (comprobantes repetidos) en:
 - **Facturas** (TipoDoc = 01)
@@ -39,7 +39,7 @@ Esta herramienta **revisa tu archivo Excel** y encuentra **registros duplicados*
 
 ---
 
-### 📋 ¿Qué archivo debes subir?
+###  ¿Qué archivo debes subir?
 
 **Archivo Excel (.xlsx)** que contenga estas **3 columnas obligatorias**:
 
@@ -49,26 +49,6 @@ Esta herramienta **revisa tu archivo Excel** y encuentra **registros duplicados*
 | **CodigoEstablecimiento** | Código del establecimiento | `B001`, `F001` |
 | **NumeroCorrelativo** | Número del comprobante | `42419003`, `00001067` |
 
----
-
-### 🎯 ¿Dónde están las boletas y facturas?
-
-| Tipo | TipoDoc | Código | Ejemplo |
-|------|---------|--------|---------|
-| 🧾 **Boleta** | `03` | Empieza con **`B`** | `B001`, `B025`, `B029` |
-| 📄 **Factura** | `01` | Empieza con **`F`** | `F001`, `F029` |
-| 📋 **Otros** | `07`, `08`, etc. | Otros códigos | `0128`, `0129` |
-
----
-
-### 📝 Ejemplo de Excel válido
-
-| TipoDoc | CodigoEstablecimiento | NumeroCorrelativo |
-|---------|----------------------|-------------------|
-| 03 | B001 | 42419003 |
-| 03 | B001 | 42419004 |
-| 01 | F001 | 00001067 |
-| 01 | F001 | 00001068 |
 
 """
 )
@@ -83,7 +63,7 @@ st.markdown("---")
 st.subheader("📤 Cargar archivo Excel")
 
 # Mostrar ejemplo visual de columnas requeridas
-with st.expander("👁️ Ver ejemplo de estructura requerida"):
+with st.expander(" Ver ejemplo de estructura requerida"):
     ejemplo_df = pd.DataFrame({
         'TipoDoc': ['03', '03', '01', '01'],
         'CodigoEstablecimiento': ['B001', 'B001', 'F001', 'F001'],
@@ -92,7 +72,7 @@ with st.expander("👁️ Ver ejemplo de estructura requerida"):
         'RazonSocialCliente': ['ARIAS OCHOA CESAR', 'VENEGAS CHAVEZ', 'CAJA MUNICIPAL', 'FINANCIERA']
     })
     st.dataframe(ejemplo_df, use_container_width=True)
-    st.caption("✅ Las columnas en **negrita** son obligatorias")
+    st.caption(" Las columnas en **negrita** son obligatorias")
 
 archivo_subido = st.file_uploader(
     "Selecciona tu archivo Excel (.xlsx)",
@@ -106,11 +86,11 @@ if archivo_subido:
     
     col_info1, col_info2, col_info3 = st.columns(3)
     with col_info1:
-        st.metric("📁 Archivo", archivo_subido.name)
+        st.metric(" Archivo", archivo_subido.name)
     with col_info2:
-        st.metric("📊 Tamaño", f"{tamano_mb:.2f} MB")
+        st.metric(" Tamaño", f"{tamano_mb:.2f} MB")
     with col_info3:
-        st.metric("📌 Formato", "Excel (.xlsx)")
+        st.metric(" Formato", "Excel (.xlsx)")
 
 # ============================================================================
 # PROCESAMIENTO
@@ -135,7 +115,7 @@ if archivo_subido:
             if message:
                 status_text.info(message)
 
-        with st.spinner('🔍 Revisando tu archivo en busca de duplicados...'):
+        with st.spinner(' Revisando tu archivo en busca de duplicados...'):
             resultado = procesar_excel(archivo_subido, progress_callback=progress_callback)
 
         elapsed = time.perf_counter() - start_time
@@ -146,16 +126,16 @@ if archivo_subido:
         # ====================================================================
         
         if resultado['success']:
-            st.success("✅ ¡Procesamiento completado exitosamente!")
+            st.success(" ¡Procesamiento completado exitosamente!")
             
             # Dashboard de métricas
-            st.subheader("📊 Resumen del Procesamiento")
+            st.subheader(" Resumen del Procesamiento")
             
             col1, col2, col3, col4 = st.columns(4)
             with col1:
-                st.metric("📄 Total de registros", f"{resultado['total_registros']:,}")
+                st.metric(" Total de registros", f"{resultado['total_registros']:,}")
             with col2:
-                st.metric("📑 Hojas procesadas", len(resultado['hojas_procesadas']))
+                st.metric(" Hojas procesadas", len(resultado['hojas_procesadas']))
             with col3:
                 st.metric("⚠️ Duplicados encontrados", resultado['duplicados_count'], 
                           delta="Revisar" if resultado['duplicados_count'] > 0 else "✅ OK",
@@ -219,17 +199,17 @@ if archivo_subido:
                     type="primary"
                 )
                 
-                st.info("💡 **Recomendación:** Revisa los duplicados y elimina los registros repetidos antes de continuar con el proceso.")
+                st.info(" **Recomendación:** Revisa los duplicados y elimina los registros repetidos antes de continuar con el proceso.")
                 
             else:
                 # ============================================================
                 # NO SE ENCONTRARON DUPLICADOS
                 # ============================================================
                 
-                st.success("✅ ¡Excelente! No se detectaron duplicados en tus documentos 01 y 03.")
+                st.success(" ¡Excelente! No se detectaron duplicados en tus documentos 01 y 03.")
                 
                 st.markdown("""
-                ### 🎯 ¿Qué significa esto?
+                ###  ¿Qué significa esto?
                 
                 - Todos tus comprobantes tipo **Factura (01)** y **Boleta (03)** tienen números únicos
                 - No hay registros repetidos que puedan causar problemas
@@ -242,7 +222,7 @@ if archivo_subido:
             st.error(f"❌ Error: {resultado.get('message', 'Error desconocido')}")
             
             st.markdown("""
-            ### 🔧 Posibles causas del error:
+            ###  Posibles causas del error:
             
             1. **El archivo no tiene las columnas necesarias**
                - Verifica que tenga: `TipoDoc`, `CodigoEstablecimiento`, `NumeroCorrelativo`

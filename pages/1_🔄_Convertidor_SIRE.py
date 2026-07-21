@@ -52,13 +52,13 @@ st.set_page_config(
     layout="wide"
 )
 
-st.markdown('<p class="header-title">🏦 Convertidor SIRE/PLE - SUNAT</p>', unsafe_allow_html=True)
+st.markdown('<p class="header-title"> 🏦 Convertidor SIRE/PLE - SUNAT</p>', unsafe_allow_html=True)
 st.markdown('<p class="header-subtitle">Área de Tributación - Banco de la Nación</p>', unsafe_allow_html=True)
 st.markdown("---")
 
 # Información en sidebar
 with st.sidebar:
-    st.markdown("### 📋 INFORMACIÓN")
+    st.markdown("### INFORMACIÓN")
     st.info("""
 **Versión:** 2.1
 
@@ -70,7 +70,7 @@ with st.sidebar:
 - ✅ Optimizado 1M+ filas
     """)
     st.markdown("---")
-    st.markdown("### 📊 ESTADÍSTICAS")
+    st.markdown("### ESTADÍSTICAS")
     st.write("📁 Archivos procesados: ", len(list(Path("output_files").glob("*.xlsx"))))
 
 # ============================================================================
@@ -84,14 +84,14 @@ col1, col2 = st.columns(2)
 with col1:
     st.markdown("""
     <div class="opcion-card">
-        <div class="opcion-title">📋 Formato 1: CON Encabezados</div>
+        <div class="opcion-title"> Formato 1: CON Encabezados</div>
         <div class="opcion-desc">Primera línea contiene nombres de columnas</div>
         <div class="opcion-desc" style="margin-top:10px;color:#666;">Ej: Ruc|Razón Social|Total CP|...</div>
     </div>
     """, unsafe_allow_html=True)
     
-    # ✅ ELIMINAR st.rerun() - Solo actualizar estado
-    if st.button("📋 CON ENCABEZADOS", use_container_width=True, key="btn_formato1"):
+    # ELIMINAR st.rerun() - Solo actualizar estado
+    if st.button(" CON ENCABEZADOS", use_container_width=True, key="btn_formato1"):
         st.session_state.formato_seleccionado = "CON_ENCABEZADOS"
         st.session_state.mostrar_paso2 = True
         st.session_state.archivo_cargado = None  # Resetear archivo
@@ -99,14 +99,14 @@ with col1:
 with col2:
     st.markdown("""
     <div class="opcion-card">
-        <div class="opcion-title">📋 Formato 2: SIN Encabezados</div>
+        <div class="opcion-title"> Formato 2: SIN Encabezados</div>
         <div class="opcion-desc">Archivo inicia directamente con datos</div>
         <div class="opcion-desc" style="margin-top:10px;color:#666;">Ej: 1|20260500|651-18264653-14|...</div>
     </div>
     """, unsafe_allow_html=True)
     
-    # ✅ ELIMINAR st.rerun() - Solo actualizar estado
-    if st.button("📋 SIN ENCABEZADOS", use_container_width=True, key="btn_formato2"):
+    #  ELIMINAR st.rerun() - Solo actualizar estado
+    if st.button(" SIN ENCABEZADOS", use_container_width=True, key="btn_formato2"):
         st.session_state.formato_seleccionado = "SIN_ENCABEZADOS"
         st.session_state.mostrar_paso2 = True
         st.session_state.archivo_cargado = None  # Resetear archivo
@@ -115,7 +115,7 @@ with col2:
 # PASO 2: CARGA DE ARCHIVO (Se muestra automáticamente)
 # ============================================================================
 
-# ✅ MOSTRAR PASO 2 cuando se ha seleccionado un formato
+# MOSTRAR PASO 2 cuando se ha seleccionado un formato
 if st.session_state.mostrar_paso2 and st.session_state.formato_seleccionado:
     
     formato = st.session_state.formato_seleccionado
@@ -136,7 +136,7 @@ if st.session_state.mostrar_paso2 and st.session_state.formato_seleccionado:
             f"Selecciona el archivo TXT ({formato})",
             type=["txt"],
             help=f"Archivo en formato SIRE - {formato}",
-            key="file_uploader_main"  # ✅ Key única para evitar conflictos
+            key="file_uploader_main"  #  Key única para evitar conflictos
         )
 
     # ========================================================================
@@ -151,9 +151,9 @@ if st.session_state.mostrar_paso2 and st.session_state.formato_seleccionado:
         tamano_mb = uploaded_file.size / (1024 * 1024)
         st.markdown(f"""
         <div class="info-box">
-            <b>📄 Archivo:</b> {uploaded_file.name}<br>
-            <b>📊 Tamaño:</b> {tamano_mb:.2f} MB ({uploaded_file.size:,} bytes)<br>
-            <b>📋 Formato:</b> {formato}
+            <b> Archivo:</b> {uploaded_file.name}<br>
+            <b> Tamaño:</b> {tamano_mb:.2f} MB ({uploaded_file.size:,} bytes)<br>
+            <b> Formato:</b> {formato}
         </div>
         """, unsafe_allow_html=True)
         
